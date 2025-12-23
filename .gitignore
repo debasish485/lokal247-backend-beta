@@ -1,0 +1,44 @@
+# ==============================
+# Laravel .gitignore
+# ==============================
+
+# Dependencies
+/vendor
+/node_modules
+
+# Environment files (secrets)
+.env
+.env.*
+!.env.example
+
+# Databases
+/database/*.sqlite*
+*.sqlite
+*.sqlite3
+
+# Storage & cache
+/storage/logs
+/storage/framework
+/storage/app/public
+/public/storage
+
+# Compiled assets
+/public/build
+/public/hot
+/mix-manifest.json
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.phpunit.result.cache
+coverage/
