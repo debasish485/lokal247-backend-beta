@@ -120,6 +120,7 @@ class JobPostService
         return JobPost::with(['category', 'recruiter'])
             ->where('uuid', $uuid)
             ->firstOrFail();
+          
     }
 
     /**

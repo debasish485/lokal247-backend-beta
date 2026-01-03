@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Services\ReviewService;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\JobPostResource;
@@ -16,7 +17,9 @@ class JobPostController extends Controller
     protected JobPostService $jobPostService;
 
     public function __construct(JobPostService $jobPostService)
+
     {
+
         $this->jobPostService = $jobPostService;
     }
 
@@ -55,7 +58,7 @@ class JobPostController extends Controller
     try {
         $job = $this->jobPostService->getByUuid($uuid);
 
-        //dd($job);
+
 
         return response()->json([
             'status' => true,

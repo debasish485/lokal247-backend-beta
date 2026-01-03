@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Recruiter;
+use App\Models\JobApplication;
 
 class JobPost extends Model
 {
@@ -85,4 +86,11 @@ protected static function boot()
     {
         return $this->belongsTo(Recruiter::class);
     }
+
+    public function applications()
+{
+    return $this->hasMany(JobApplication::class, 'job_id');
+}
+
+
 }

@@ -138,4 +138,17 @@ $application = $this->workerService->applyForJob($worker, $job);
     }
 }
 
+public function viewAppliedJobs(Request $request)
+{
+    try {
+        $worker = $request->user();
+        return $this->workerService->viewAppliedJobs($worker);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }

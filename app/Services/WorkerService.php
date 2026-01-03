@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\JobApplication;
 use App\Enums\JobApplicationStatus;
+use App\Http\Resources\AppliedJobCollection;
+use App\Http\Resources\JobPostResource;
 use App\Models\JobPost;
 use App\Models\User as Worker;
 use App\Models\User;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Kreait\Firebase\Auth;
+
 
 class WorkerService
 {
@@ -105,16 +108,30 @@ class WorkerService
         });
     }
 
-    public function applyForJob(User $worker, JobPost $job): JobApplication
+public function applyForJob(User $worker, JobPost $job): JobApplication
 {
+    $exists = JobApplication::where('job_id', $job->id)
+        ->where('worker_id', $worker->id)
+        ->exists();
 
-
-     
-    return JobApplication::create([
-        'job_id'=>$job->id,
-        'worker_id'=>$worker->id,
-        'status'=>JobApplicationStatus::APPLIED,
-    ]);
-
+    if ($exists) {
+        throw new \Exception('Worker has already applied for this job');
     }
+
+    return JobApplication::create([
+        'job_id'    => $job->id,
+        'worker_id' => $worker->id,
+        'status'    => JobApplicationStatus::APPLIED,
+    ]);
+}
+
+public function viewAppliedJobs(User $worker)
+{
+    $jobs = JobPost::whereHas('applications', function ($query) use ($worker) {
+        $query->where('worker_id', $worker->id);
+    })->paginate(5);
+
+    return new AppliedJobCollection($jobs);
+}
+
 }

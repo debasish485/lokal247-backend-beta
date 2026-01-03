@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RecruiterController;
 use App\Http\Controllers\API\JobPostController;
-use App\Http\Controllers\Api\WorkerController;
+use App\Http\Controllers\API\ReviewController;
+use App\Http\Controllers\API\WorkerController;
 
 // ---------------------------------------------
 // Default Sanctum User Route
@@ -47,20 +48,23 @@ Route::middleware('auth:sanctum','abilities:create-job')->group(function () {
     Route::get('/recruiter/profile',[RecruiterController::class, 'profile']);
     Route::post('/recruiter/profile',[RecruiterController::class, 'updateProfile']);
     Route::post('/recruiter/job-posts', [RecruiterController::class, 'createJobPost']);
-
-    // Job Posts — only authenticated recruiters can manage
-
     Route::put('/job-posts/{uuid}', [JobPostController::class, 'update']);
     Route::delete('/job-posts/{uuid}', [JobPostController::class, 'destroy']);
+    Route::post('job-applications/{jobuuid}/reviews', [ReviewController::class, 'store']);
+    Route::put('job-applications/{reviewUuid}/reviews', [ReviewController::class, 'update']);
 
 
 
 });
 
+// ---------------------------------------------
+// Protected Routes (Require Bearer Token)
+// ---------------------------------------------
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/worker/profile', [WorkerController::class, 'showProfile']);
     Route::post('/worker/profile', [WorkerController::class, 'updateProfile']);
     Route::post('worker/jobs/{uuid}/apply',[WorkerController::class, 'applyForJob']);
+    Route::get('/worker/applied-jobs', [WorkerController::class, 'viewAppliedJobs']);
 });
 // ---------------------------------------------
 // Worker OTP Authentication (Public)

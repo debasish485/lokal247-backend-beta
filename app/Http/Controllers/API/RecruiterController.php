@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Foundation\Auth\User;
+use PHPUnit\Event\Code\Throwable;
 
 class RecruiterController extends Controller
 {
@@ -39,6 +40,16 @@ class RecruiterController extends Controller
                 'message' => 'Invalid credentials',
                 'errors'  => $e->errors(),
             ], 422);
+        }catch(Exception $e){
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }catch(Throwable $e){
+            return response()->json([
+                'status'  => false,
+                'message' => 'Internal server error',
+            ], 500);
         }
 
         return response()->json([

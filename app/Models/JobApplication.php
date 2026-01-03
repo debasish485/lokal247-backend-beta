@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use App\Enums\JobApplicationStatus;
 use App\Models\JobPost;
 use App\Models\User as Worker;
@@ -16,6 +17,7 @@ class JobApplication extends Model
      * Mass assignable attributes
      */
     protected $fillable = [
+        'job_uuid',
         'job_id',
         'worker_id',
         'status',
@@ -25,22 +27,34 @@ class JobApplication extends Model
      * Casts
      */
     protected $casts = [
-        'status' => JobApplicationStatus::class
+        'status' => JobApplicationStatus::class,
     ];
 
     /**
-     * Relationship: JobApplication belongs to a Job
+     * Auto-generate UUID on creation
      */
-    public function job()
+    protected static function booted(): void
     {
-        return $this->belongsTo(JobPost::class,'job_id');
+        static::creating(function ($model) {
+            if (empty($model->job_uuid)) {
+                $model->job_uuid = (string) Str::uuid();
+            }
+        });
     }
 
     /**
-     * Relationship: JobApplication belongs to a Worker (User)
+     * JobApplication belongs to a Job
+     */
+    public function job()
+    {
+        return $this->belongsTo(JobPost::class, 'job_id');
+    }
+
+    /**
+     * JobApplication belongs to a Worker (User)
      */
     public function worker()
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Worker::class, 'worker_id');
     }
 }
